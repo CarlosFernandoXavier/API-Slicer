@@ -1,3 +1,7 @@
+package model;
+
+import model.ClassResponse;
+
 import java.util.List;
 
 public class Microservice {

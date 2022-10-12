@@ -1,3 +1,5 @@
+package model;
+
 public class ClassResponse {
     private String name;
     private MethodResponse methods;
