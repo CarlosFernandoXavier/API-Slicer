@@ -26,7 +26,8 @@ public class APISlicerTest {
 
         Map<String, List<Class>> functionalities = convertFunctionalityFiles(arquivos, packages);
         Map<String, List<Column>> similarityTable = createSimilarityTable(functionalities, packages);
-        List<Microservice> microsservicos = groupFunctionalitiesBySimilatiry(similarityTable, functionalities,
+        Map<String, List<Class>> functionalities2 = convertFunctionalityFiles(arquivos);
+        List<Microservice> microsservicos = groupFunctionalitiesBySimilatiry(similarityTable, functionalities2,
                 similarityValue);
 
         System.out.println("Results:");
@@ -297,6 +298,55 @@ public class APISlicerTest {
         return functionalityMaps;
     }
 
+    private static Map<String, List<Class>> convertFunctionalityFiles(List<String> functionalityFiles) {
+        Map<String, List<Class>> functionalityMaps = new HashMap<>();
+        Class classe;
+        List<Class> classes;
+        File file;
+        String nomeFuncionalidade;
+        for (String nomeArquivo : functionalityFiles) {
+            file = new File(nomeArquivo);
+            nomeFuncionalidade = file.getName().substring(0, file.getName().lastIndexOf("."));
+            classes = new ArrayList<>();
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String st;
+                while ((st = br.readLine()) != null) {
+                    String[] linha = st.split(", ");
+
+                    String className = linha[0].substring(linha[0].lastIndexOf(": ") + 2);
+                    String packageName = className.substring(0, className.lastIndexOf("."));
+
+                    classe = new Class();
+                    classe.setClassName(className);
+                    classe.setPackageName(packageName);
+
+                    //TODO corrigir o nome dessa variável abaixo
+                    List<String> t = new ArrayList<>();
+
+                    t.add(linha[1].substring(linha[1].lastIndexOf(": ") + 2));
+                    classe.setMethodName(t);
+
+                    Integer indiceClasse = getIndiceClasse(classes, classe);
+                    if (Objects.isNull(indiceClasse)) {
+                        classes.add(classe);
+                    } else {
+                        Class classeA = classes.get(indiceClasse);
+                        classes.remove(classeA);
+                        classeA.addMethodName(linha[1].substring(linha[1].lastIndexOf(": ") + 2));
+                        classes.add(indiceClasse, classeA);
+                    }
+
+
+                }
+                functionalityMaps.put(nomeFuncionalidade, classes);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return functionalityMaps;
+    }
+
     private static Boolean isAuthorizedPackage(String packageName, List<String> packages) {
         return packages.stream()
                 .filter(pack -> pack.equals(packageName))
@@ -346,7 +396,7 @@ public class APISlicerTest {
                 String fileName = ze.getName();
                 nomeArquivos.add(fileName);
                 File newFile = new File(destDir + File.separator + fileName);
-                System.out.println("Unzipping to " + newFile.getAbsolutePath());
+                //System.out.println("Unzipping to " + newFile.getAbsolutePath());
                 //create directories for sub directories in zip
                 new File(newFile.getParent()).mkdirs();
                 FileOutputStream fos = new FileOutputStream(newFile);
