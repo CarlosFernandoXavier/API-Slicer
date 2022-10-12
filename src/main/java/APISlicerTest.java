@@ -9,40 +9,41 @@ import java.util.zip.ZipInputStream;
 
 public class APISlicerTest {
 
-    private static final Integer LIMITE_DECOMPOSICAO = 90;
-    private final static String DIRETORIO_LEITURA = "C:\\Users\\carlo\\Documents\\projetos\\sugestao_microsservico\\src\\main\\resources\\arquivos.zip";
-    //private final static String DIRETORIO_LEITURA = "src/main/resources/trace-shopping-cart.zip";
-    //private final static String DIRETORIO_LEITURA = "src/main/resources/trace-blog-api.zip";
-
     public static void main(String[] args) {
-        List<String> arquivos = buscarNomeArquivos(DIRETORIO_LEITURA);
-        //TODO pacotes que serão considerados
-        /*List<String> packages = List.of("me.zhulin.shopapi.api",
-                "me.zhulin.shopapi.service.impl");
-*/
-        List<String> packages = List.of("com.unisinos.sistema.adapter.inbound.controller",
-                "com.unisinos.sistema.application.service",
-                "com.unisinos.sistema.adapter.outbound.repository");
+        Scanner input = new Scanner(System.in);
 
-       /* List<String> packages = List.of("com.springboot.blog.controller",
-                "com.springboot.blog.service.impl");*/
+        System.out.println("Enter the path of zip file: ");
+        String readDirectory = input.nextLine();
+
+        System.out.println("Enter the packages: ");
+        String importantPackages = input.nextLine();
+
+        System.out.println("Enter the similarity value: ");
+        Integer similarityValue = Integer.parseInt(input.nextLine());
+
+        List<String> arquivos = buscarNomeArquivos(readDirectory);
+        List<String> packages = Arrays.asList(importantPackages.split(", "));
 
         Map<String, List<Class>> functionalities = convertFunctionalityFiles(arquivos, packages);
         Map<String, List<Column>> similarityTable = createSimilarityTable(functionalities, packages);
-        List<Microservice> microsservicos = groupFunctionalitiesBySimilatiry(similarityTable, functionalities);
+        List<Microservice> microsservicos = groupFunctionalitiesBySimilatiry(similarityTable, functionalities,
+                similarityValue);
+
+        System.out.println("Results:");
         printMicrosservices(microsservicos);
 
     }
 
     private static List<Microservice> groupFunctionalitiesBySimilatiry(Map<String, List<Column>> similarityTable,
-                                                                       Map<String, List<Class>> funcionalidadesMap) {
+                                                                       Map<String, List<Class>> funcionalidadesMap,
+                                                                       Integer similarityValue) {
         List<String> similarities = new ArrayList<>();
         List<Microservice> microservices = new ArrayList<>();
 
         similarityTable.forEach((row, columns) -> {
             String functionalities = row;
             List<Column> colunasFiltradas = columns.stream()
-                    .filter(column -> column.getThreshold() >= LIMITE_DECOMPOSICAO)
+                    .filter(column -> column.getThreshold() >= similarityValue)
                     .collect(Collectors.toList());
 
             if (microservices.isEmpty()) {
