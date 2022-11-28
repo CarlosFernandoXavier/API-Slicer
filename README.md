@@ -17,3 +17,5 @@ Read a Monolithic API and recommend microservices
 6. Provide the similarity value;
    - Example: 90
 
+## Observation: ##
+An example zip folder has been provided which should be used as input data. Its name is arquivos.zip
