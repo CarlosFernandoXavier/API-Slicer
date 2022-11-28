@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 
 public class MicroserviceService {
 
-    public List<Microservice> groupFunctionalitiesBySimilatiry(Map<String, List<Column>> similarityTable,
-                                                                       Map<String, List<Class>> funcionalidadesMap,
-                                                                       Integer similarityValue) {
+    public List<Microservice> groupFeaturesBySimilarity(Map<String, List<Column>> similarityTable,
+                                                        Map<String, List<Class>> funcionalidadesMap,
+                                                        Integer similarityValue) {
         List<String> similarities = new ArrayList<>();
         List<Microservice> microservices = new ArrayList<>();
 

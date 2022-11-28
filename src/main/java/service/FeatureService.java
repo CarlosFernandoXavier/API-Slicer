@@ -22,11 +22,11 @@ public class FeatureService {
             classes = new ArrayList<>();
             try {
                 BufferedReader br = new BufferedReader(new FileReader(file));
-                String st;
-                while ((st = br.readLine()) != null) {
-                    String[] linha = st.split(", ");
+                String auxiliary;
+                while ((auxiliary = br.readLine()) != null) {
+                    String[] line = auxiliary.split(", ");
 
-                    String className = linha[0].substring(linha[0].lastIndexOf(": ") + 2);
+                    String className = line[0].substring(line[0].lastIndexOf(": ") + 2);
                     String packageName = className.substring(0, className.lastIndexOf("."));
                     if (isAuthorizedPackage(packageName, packages)) {
                         classe = new model.Class();
@@ -34,19 +34,19 @@ public class FeatureService {
                         classe.setPackageName(packageName);
 
                         //TODO corrigir o nome dessa variável abaixo
-                        List<String> t = new ArrayList<>();
+                        List<String> methodList = new ArrayList<>();
 
-                        t.add(linha[1].substring(linha[1].lastIndexOf(": ") + 2));
-                        classe.setMethodName(t);
+                        methodList.add(line[1].substring(line[1].lastIndexOf(": ") + 2));
+                        classe.setMethodName(methodList);
 
-                        Integer indiceClasse = getIndiceClasse(classes, classe);
-                        if (Objects.isNull(indiceClasse)) {
+                        Integer classIndex = getClassIndex(classes, classe);
+                        if (Objects.isNull(classIndex)) {
                             classes.add(classe);
                         } else {
-                            model.Class classeA = classes.get(indiceClasse);
+                            model.Class classeA = classes.get(classIndex);
                             classes.remove(classeA);
-                            classeA.addMethodName(linha[1].substring(linha[1].lastIndexOf(": ") + 2));
-                            classes.add(indiceClasse, classeA);
+                            classeA.addMethodName(line[1].substring(line[1].lastIndexOf(": ") + 2));
+                            classes.add(classIndex, classeA);
                         }
                     }
 
@@ -89,7 +89,7 @@ public class FeatureService {
                     t.add(linha[1].substring(linha[1].lastIndexOf(": ") + 2));
                     classe.setMethodName(t);
 
-                    Integer indiceClasse = getIndiceClasse(classes, classe);
+                    Integer indiceClasse = getClassIndex(classes, classe);
                     if (Objects.isNull(indiceClasse)) {
                         classes.add(classe);
                     } else {
@@ -128,7 +128,7 @@ public class FeatureService {
         return indice;
     }
 
-    private static Integer getIndiceClasse(List<Class> classes, Class classe) {
+    private static Integer getClassIndex(List<Class> classes, Class classe) {
         Integer indice = null;
         if (classes.isEmpty()) return null;
 

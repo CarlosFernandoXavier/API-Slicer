@@ -11,14 +11,14 @@ import java.util.zip.ZipInputStream;
 
 public class FileService {
 
-    public List<String> buscarNomeArquivos(String diretorioLeitura) {
-        String diretorioDestino = "src/main/resources/output";
-        List<String> nomeArquivos = new ArrayList<>();
-        descompactar(diretorioLeitura, diretorioDestino, nomeArquivos);
-        return getPathArquivos(diretorioDestino, nomeArquivos);
+    public List<String> getFileNames(String readDirectory) {
+        String destinationDirectory = "src/main/resources/output";
+        List<String> fileNames = new ArrayList<>();
+        unzip(readDirectory, destinationDirectory, fileNames);
+        return getPathArquivos(destinationDirectory, fileNames);
     }
 
-    private void descompactar(String zipFilePath, String destDir, List<String> nomeArquivos) {
+    private void unzip(String zipFilePath, String destDir, List<String> nomeArquivos) {
         File dir = new File(destDir);
         // create output directory if it doesn't exist
         if (!dir.exists()) dir.mkdirs();

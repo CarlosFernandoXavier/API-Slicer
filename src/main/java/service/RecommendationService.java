@@ -1,7 +1,5 @@
 package service;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import model.Class;
 import model.Column;
 import model.Microservice;
@@ -28,13 +26,12 @@ public class RecommendationService {
     public List<Microservice> getRecommendations() {
 
         consoleService.setInputData();
-        List<String> arquivos = fileService.buscarNomeArquivos(consoleService.getReadDirectory());
+        List<String> files = fileService.getFileNames(consoleService.getReadDirectory());
         List<String> packages = Arrays.asList(consoleService.getImportantPackages().split(", "));
-
-        Map<String, List<Class>> functionalities = featureService.convertFilesToFeatures(arquivos, packages);
-        Map<String, List<Column>> similarityTable = similarityService.createSimilarityMap(functionalities);
-        Map<String, List<Class>> functionalities2 = featureService.convertFilesToFeatures(arquivos);
-        return microservice.groupFunctionalitiesBySimilatiry(similarityTable, functionalities2,
+        Map<String, List<Class>> functionalities = featureService.convertFilesToFeatures(files, packages);
+        Map<String, List<Column>> similarityMap = similarityService.createSimilarityMap(functionalities);
+        Map<String, List<Class>> completeFunctionalities = featureService.convertFilesToFeatures(files);
+        return microservice.groupFeaturesBySimilarity(similarityMap, completeFunctionalities,
                 consoleService.getSimilarityValue());
 
     }

@@ -15,16 +15,16 @@ public class SimilarityService {
         Map<String, List<Column>> similarityMap = new HashMap<>();
 
         functionalities.forEach((functionality1, classes1) -> {
-            List<Column> colunas = new ArrayList<>();
+            List<Column> columns = new ArrayList<>();
             functionalities.forEach((functionality2, classes2) -> {
                 if (!functionality1.equals(functionality2)) {
                     List<Class> classesIguais = intersection(classes1, classes2);
                     Double similarity = Double.valueOf(classesIguais.size() * (0.1 * classesIguais.size())) /
                             Double.valueOf(classes1.size() * (0.1 * classes1.size())) * 100;
-                    colunas.add(new Column(functionality2, similarity));
+                    columns.add(new Column(functionality2, similarity));
                 }
             });
-            similarityMap.put(functionality1, colunas);
+            similarityMap.put(functionality1, columns);
         });
         return similarityMap;
     }
